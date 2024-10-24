@@ -13,6 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from fake_useragent import UserAgent  # Randomize User-Agent
 import google.generativeai as genai
 import uuid
+from django.conf import setting
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -27,7 +28,7 @@ ai_response = ""
 
 def setup_driver():
     """Set up the Edge WebDriver with options."""
-    edge_driver_path = r'D:\selenium\msedgedriver.exe'
+    edge_driver_path =os.path.join(settings.BASE_DIR,"msedgedriver")
     options = Options()
     options.use_chromium = True
     options.add_argument("--headless")  # Run browser without UI
