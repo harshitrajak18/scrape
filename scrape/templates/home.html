@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Scraper and AI Prompt</title>
+    <!-- Importing Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1c1c1c;
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            overflow: auto;
+            transition: background-color 0.5s ease;
+        }
+
+        .container {
+            background-color: #2a2a2a;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 600px;
+            animation: fadeIn 0.5s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        h2 {
+            text-align: center;
+            color: #00ffcc;
+            margin-bottom: 1rem;
+            transition: color 0.3s;
+            font-weight: 600;
+        }
+
+        h2:hover {
+            color: #ffcc00;
+        }
+
+        .form-label {
+            margin-bottom: 0.5rem;
+            color: #bbb;
+            display: block;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1.2rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #3c3c3c;
+            color: #fff;
+            outline: none;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .form-control:focus {
+            background-color: #505050;
+        }
+
+        /* Make input smaller and scrollable */
+        .form-control-scrollable {
+            height: 100px; /* Set a fixed height */
+            overflow: auto; /* Allow scrolling when content exceeds the height */
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .response-text {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #444;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            color: #e0e0e0;
+            line-height: 1.7;
+            display: none;
+        }
+
+        .response-text h3 {
+            color: #00ffcc;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .response-text ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .response-text ul li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: #fff;
+            transition: color 0.3s;
+        }
+
+        .response-text ul li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #00ffcc;
+            font-size: 1.4rem;
+        }
+
+        .error-message {
+            color: #ff4c4c;
+            text-align: center;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+
+        .spinner {
+            display: none;
+            margin: 10px auto;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #00ffcc;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Web Scraper and AI Prompt</h2>
+    
+    {% if messages %}
+    <div>
+        {% for message in messages %}
+        <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            <label for="url" class="form-label">Enter URL:</label>
+            <input type="url" class="form-control" id="url" name="url" placeholder="Enter a valid URL" required>
+        </div>
+        <div>
+            <label for="prompt" class="form-label">Prompt:</label>
+            <textarea class="form-control form-control-scrollable" id="prompt" name="prompt" placeholder="Enter your prompt here" required></textarea>
+        </div>
+        <button type="submit" class="btn">Submit</button>
+    </form>
+
+    {% if response %}
+    <div class="response-text" id="response-text" style="display: block;">
+        <h3>AI Response:</h3>
+        <ul>
+            {% for line in response.splitlines %}
+            <li>{{ line }}</li>
+            {% endfor %}
+        </ul>
+        <form method="POST" action="{% url 'download' %}" onsubmit="showSpinner()">
+            {% csrf_token %}
+            <button type="submit" class="btn">Download Response</button>
+        </form>
+        <div class="spinner" id="spinner"></div>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <p class="error-message">{{ error }}</p>
+    {% endif %}
+    
+</div>
+
+<script>
+    function showSpinner() {
+        document.getElementById('spinner').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
