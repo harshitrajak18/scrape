@@ -13,6 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from fake_useragent import UserAgent  # Randomize User-Agent
 import google.generativeai as genai
 import uuid
+from django.conf import settings
 
 
 # Configure logging
