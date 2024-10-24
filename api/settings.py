@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-ha2ghtfzpgcc39cb)u*6(^di&c9(oi9%(9zfp3^(bjfo)+!b#7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["scrape.onrender.com"]
+ALLOWED_HOSTS = ['scrape-p5um.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
